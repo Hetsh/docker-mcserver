@@ -19,7 +19,7 @@ fi
 LATEST_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
 METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$LATEST_VERSION\") | .url")
 DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
-sed -i "s|ENV MC_URL=\".*\"|ENV MC_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+sed -i "s|ARG MC_URL=\".*\"|ARG MC_URL=\"$DOWNLOAD_URL\"|" Dockerfile
 
 git add Dockerfile
 git commit -m "Version bump to $LATEST_VERSION"
