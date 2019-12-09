@@ -1,0 +1,12 @@
+[Unit]
+Description=Minecraft Server Container@%I
+After=docker.service
+Requires=docker.service
+
+[Service]
+ExecStartPre=-/bin/docker create --rm --interactive --name mcserver_%I --publish %I:25565 --mount type=bind,source=/srv/mcserver_%I,target=/mcserver hetsh/mcserver
+ExecStart=/bin/docker start --attach mcserver_%I
+ExecStop=/bin/sh -c "echo stop | docker attach mcserver_%I"
+
+[Install]
+WantedBy=multi-user.target
