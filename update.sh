@@ -57,7 +57,7 @@ else
         git add Dockerfile
         git commit -m "Version bump to $NEXT_VERSION"
         git push
-        git tag -f "$NEXT_VERSION"
-        git push -f origin "$NEXT_VERSION"
+        git tag "$NEXT_VERSION"
+        git push origin "$NEXT_VERSION"
     fi
 fi
