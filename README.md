@@ -20,7 +20,7 @@ mkdir -p "$MP"
 echo "eula=true" > "$MP/eula.txt"
 chown -R 1357:1357 "$MP"
 ```
-`1357` is the numerical id of the user running the server (see Dockerfile).
+`1357` is the numerical id of the user running the server (see Dockerfile). Mojang also requires you to accept their EULA. Honestly, you would just klick 'accept' anyway...
 
 ## Automate startup and shutdown via systemd
 ```bash
@@ -29,4 +29,4 @@ systemctl enable mcserver@<port> --now
 The systemd unit can be found in my [GitHub](https://github.com/Hetsh/docker-mcserver) repository. Individual server instances are distinguished by host-port. By default, the systemd service assumes `/srv/mcserver_<port>` for persistent storage.
 
 ## Fork Me!
-This is an open project (visit [GitHub](https://github.com/Hetsh/docker-mcserver)). Please feel free to ask questions, contribute or modify this project.
+This is an open project (visit [GitHub](https://github.com/Hetsh/docker-mcserver)). Please feel free to ask questions, file an issue or contribute to it.
