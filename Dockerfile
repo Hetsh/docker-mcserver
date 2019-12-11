@@ -2,7 +2,7 @@ FROM alpine:3.10.3
 RUN apk add --no-cache openjdk11-jre-headless
 
 ARG MC_USER="mc"
-ARG MC_URL="https://launcher.mojang.com/v1/objects/3dc3d84a581f14691199cf6831b71ed1296a9fdf/server.jar"
+ARG MC_URL="https://launcher.mojang.com/v1/objects/e9f105b3c5c7e85c7b445249a93362a22f62442d/server.jar"
 ARG MC_DIR="/mcserver"
 ARG MC_JAR="/server.jar"
 

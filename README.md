@@ -3,7 +3,7 @@ Super small and simple vanilla minecraft server.
 
 ## Running the server
 ```bash
-docker run -d --interactive --name mcserver --publish 25565:25565 --mount type=bind,source=/path/to/storage,target=/mcserver hetsh/mcserver
+docker run --detach --interactive --name mcserver --publish 25565:25565 --mount type=bind,source=/path/to/storage,target=/mcserver hetsh/mcserver
 ```
 `--interactive` enables passing commands to the running server (required for shutdown).
 
