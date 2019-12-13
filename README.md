@@ -3,7 +3,7 @@ Super small and simple vanilla minecraft server.
 
 ## Running the server
 ```bash
-docker run --detach --interactive --name mcserver --publish 25565:25565 --mount type=bind,source=/path/to/storage,target=/mcserver hetsh/mcserver
+docker run --detach --interactive --name mcserver --publish 25565:25565 hetsh/mcserver
 ```
 `--interactive` enables passing commands to the running server (required for shutdown).
 
@@ -20,7 +20,12 @@ mkdir -p "$MP"
 echo "eula=true" > "$MP/eula.txt"
 chown -R 1357:1357 "$MP"
 ```
-`1357` is the numerical id of the user running the server (see Dockerfile). Mojang also requires you to accept their EULA. Honestly, you would just klick 'accept' anyway...
+`1357` is the numerical id of the user running the server (see Dockerfile).
+Mojang also requires you to accept their EULA. Honestly, you would just klick 'accept' anyway...
+Start the server with the additional mount flag:
+```bash
+docker run --mount type=bind,source=/path/to/storage,target=/mcserver ...
+```
 
 ## Automate startup and shutdown via systemd
 ```bash
