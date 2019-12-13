@@ -1,4 +1,4 @@
-# mcserver
+# MCServer
 Super small and simple vanilla minecraft server.
 
 ## Running the server

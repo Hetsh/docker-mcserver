@@ -14,5 +14,6 @@ trap "rm -rf $TMP_DIR" EXIT
 echo "eula=true" > "$TMP_DIR/eula.txt"
 chown -R 1357:1357 "$TMP_DIR"
 
-docker build --tag "mcserver" .
-docker run --rm --interactive --name mcserver --publish 25565:25565 --mount type=bind,source="$TMP_DIR",target=/mcserver mcserver
+IMAGE_NAME="mcserver"
+docker build --tag "$IMAGE_NAME" .
+docker run --rm --interactive --publish 25565:25565 --mount type=bind,source="$TMP_DIR",target=/mcserver "$IMAGE_NAME"

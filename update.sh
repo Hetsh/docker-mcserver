@@ -24,10 +24,10 @@ CURRENT_ALPINE_VERSION="${CURRENT_ALPINE_VERSION#*:}"
 ALPINE_VERSION=$(curl -L -s 'https://registry.hub.docker.com/v2/repositories/library/alpine/tags' | jq '."results"[]["name"]' | grep -P -o "(\d+\.)+\d+" | head -n 1)
 if [ "$CURRENT_ALPINE_VERSION" != "$ALPINE_VERSION" ]
 then
+    echo "Alpine $ALPINE_VERSION available!"
+
     RELEASE="${MC_VERSION#*-}"
     NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
-
-    echo "Updated Alpine to $ALPINE_VERSION"
 fi
 
 # MC Server
@@ -35,13 +35,13 @@ CURRENT_MC_VERSION=${CURRENT_VERSION%-*}
 MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
 if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]
 then
+    echo "MC Server $MC_VERSION available!"
+
     METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
     DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
 
     BASE="${MC_VERSION%-*}"
     NEXT_VERSION="$MC_VERSION-1"
-
-    echo "Updated MC Server to $MC_VERSION"
 fi
 
 if [ "$CURRENT_VERSION" == "$NEXT_VERSION" ]
