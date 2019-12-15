@@ -21,4 +21,4 @@ EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 ENV JAVA_OPT="-Xms8M -Xmx1G"
 ENV MC_JAR="$MC_JAR"
-ENTRYPOINT exec java -jar $JAVA_OPT "$MC_JAR" nogui
+ENTRYPOINT exec java $JAVA_OPT -jar "$MC_JAR" nogui

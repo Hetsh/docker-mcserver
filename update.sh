@@ -3,6 +3,12 @@
 set -e
 trap "exit" SIGINT
 
+if [ "$USER" == "root" ]
+then
+    echo "Must not be executed as user \"root\"!"
+    exit -1
+fi
+
 if ! [ -x "$(command -v jq)" ]
 then
     echo "JSON Parser \"jq\" is required but not installed!"
@@ -15,7 +21,7 @@ then
     exit 2
 fi
 
-CURRENT_VERSION=$(git describe --tags)
+CURRENT_VERSION=$(git describe --tags --abbrev=0)
 NEXT_VERSION="$CURRENT_VERSION"
 
 # Alpine
@@ -26,7 +32,7 @@ if [ "$CURRENT_ALPINE_VERSION" != "$ALPINE_VERSION" ]
 then
     echo "Alpine $ALPINE_VERSION available!"
 
-    RELEASE="${MC_VERSION#*-}"
+    RELEASE="${CURRENT_VERSION#*-}"
     NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
 fi
 
@@ -40,7 +46,6 @@ then
     METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
     DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
 
-    BASE="${MC_VERSION%-*}"
     NEXT_VERSION="$MC_VERSION-1"
 fi
 
@@ -53,15 +58,15 @@ else
     then
         sed -i "s|FROM alpine:.*|FROM alpine:$ALPINE_VERSION|" Dockerfile
         sed -i "s|ARG MC_URL=\".*\"|ARG MC_URL=\"$DOWNLOAD_URL\"|" Dockerfile
-    fi
 
-    read -p "Commit changes? [y/n]" -n 1 -r && echo
-    if [[ $REPLY =~ ^[Yy]$ ]]
-    then
-        git add Dockerfile
-        git commit -m "Version bump to $NEXT_VERSION"
-        git push
-        git tag "$NEXT_VERSION"
-        git push origin "$NEXT_VERSION"
+		read -p "Commit changes? [y/n]" -n 1 -r && echo
+		if [[ $REPLY =~ ^[Yy]$ ]]
+		then
+			git add Dockerfile
+			git commit -m "Version bump to $NEXT_VERSION"
+			git push
+			git tag "$NEXT_VERSION"
+			git push origin "$NEXT_VERSION"
+		fi
     fi
 fi
