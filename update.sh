@@ -36,17 +36,17 @@ then
     NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
 fi
 
-# MC Server
-CURRENT_MC_VERSION=${CURRENT_VERSION%-*}
-MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
-if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]
+# Application
+CURRENT_APP_VERSION=${CURRENT_VERSION%-*}
+APP_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
+if [ "$CURRENT_APP_VERSION" != "$APP_VERSION" ]
 then
-    echo "MC Server $MC_VERSION available!"
+    echo "MC Server $APP_VERSION available!"
 
-    METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
+    METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$APP_VERSION\") | .url")
     DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
 
-    NEXT_VERSION="$MC_VERSION-1"
+    NEXT_VERSION="$APP_VERSION-1"
 fi
 
 if [ "$CURRENT_VERSION" == "$NEXT_VERSION" ]
@@ -57,7 +57,7 @@ else
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
         sed -i "s|FROM alpine:.*|FROM alpine:$ALPINE_VERSION|" Dockerfile
-        sed -i "s|ARG MC_URL=\".*\"|ARG MC_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+        sed -i "s|ARG BIN_URL=\".*\"|ARG BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
 
 		read -p "Commit changes? [y/n]" -n 1 -r && echo
 		if [[ $REPLY =~ ^[Yy]$ ]]
