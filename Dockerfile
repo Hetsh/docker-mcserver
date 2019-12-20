@@ -1,11 +1,11 @@
-FROM alpine:3.10.3
+FROM alpine:3.11.0
 RUN apk add --no-cache openjdk11-jre-headless
 
 ARG APP_USER="mc"
 RUN adduser -D -u 1357 "$APP_USER"
 
 ARG APP_BIN="/server.jar"
-ARG BIN_URL="https://launcher.mojang.com/v1/objects/e9f105b3c5c7e85c7b445249a93362a22f62442d/server.jar"
+ARG BIN_URL="https://launcher.mojang.com/v1/objects/4d1826eebac84847c71a77f9349cc22afd0cf0a1/server.jar"
 ADD "$BIN_URL" "$APP_BIN"
 RUN chown "$APP_USER":"$APP_USER" "$APP_BIN"
 
