@@ -56,8 +56,15 @@ else
     read -p "Save changes? [y/n]" -n 1 -r && echo
     if [[ $REPLY =~ ^[Yy]$ ]]
     then
-        sed -i "s|FROM alpine:.*|FROM alpine:$ALPINE_VERSION|" Dockerfile
-        sed -i "s|ARG BIN_URL=\".*\"|ARG BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+        if [ "$CURRENT_ALPINE_VERSION" != "$ALPINE_VERSION" ]
+        then
+            sed -i "s|FROM alpine:.*|FROM alpine:$ALPINE_VERSION|" Dockerfile
+        fi
+        
+        if [ "$CURRENT_APP_VERSION" != "$APP_VERSION" ]
+        then
+            sed -i "s|ARG BIN_URL=\".*\"|ARG BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+        fi
 
 		read -p "Commit changes? [y/n]" -n 1 -r && echo
 		if [[ $REPLY =~ ^[Yy]$ ]]
