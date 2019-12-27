@@ -1,4 +1,4 @@
-FROM alpine:3.11.0
+FROM alpine:3.11.2
 RUN apk add --no-cache openjdk11-jre-headless
 
 ARG APP_USER="mc"
