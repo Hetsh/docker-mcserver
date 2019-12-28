@@ -9,16 +9,17 @@ then
     exit 1
 fi
 
-APP_UID=1357
 APP_NAME="mcserver"
 docker build --tag "$APP_NAME" .
 
 read -p "Test image? [y/n]" -n 1 -r && echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
-	TMP_DIR=$(mktemp -d /tmp/mcserver-XXXXXXXXXX)
+	TMP_DIR=$(mktemp -d "/tmp/$APP_NAME-XXXXXXXXXX")
 	trap "rm -rf $TMP_DIR" EXIT
 	echo "eula=true" > "$TMP_DIR/eula.txt"
+
+	APP_UID=1357
 	chown -R "$APP_UID":"$APP_UID" "$TMP_DIR"
 
 	docker run \

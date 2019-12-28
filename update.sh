@@ -12,14 +12,17 @@ fi
 if ! [ -x "$(command -v jq)" ]
 then
     echo "JSON Parser \"jq\" is required but not installed!"
-    exit 1
+    exit -2
 fi
 
 if ! [ -x "$(command -v curl)" ]
 then
     echo "\"curl\" is required but not installed!"
-    exit 2
+    exit -3
 fi
+
+WORK_DIR="${0%/*}"
+cd "$WORK_DIR"
 
 CURRENT_VERSION=$(git describe --tags --abbrev=0)
 NEXT_VERSION="$CURRENT_VERSION"
@@ -51,7 +54,7 @@ fi
 
 if [ "$CURRENT_VERSION" == "$NEXT_VERSION" ]
 then
-    echo "Nothing changed."
+	echo "No updates available."
 else
     read -p "Save changes? [y/n]" -n 1 -r && echo
     if [[ $REPLY =~ ^[Yy]$ ]]
