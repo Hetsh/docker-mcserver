@@ -6,8 +6,11 @@ trap "exit" SIGINT
 if ! docker version &> /dev/null
 then
     echo "Docker daemon is not running or you have unsufficient permissions!"
-    exit 1
+    exit -1
 fi
+
+WORK_DIR="${0%/*}"
+cd "$WORK_DIR"
 
 APP_NAME="mcserver"
 docker build --tag "$APP_NAME" .
@@ -25,7 +28,9 @@ then
 	docker run \
 	--rm \
 	--interactive \
-	--publish 25565:25565 \
+	--publish 25565:25565/tcp \
+	--publish 25565:25565/udp \
+	--publish 25575:25575/tcp \
 	--mount type=bind,source="$TMP_DIR",target="/$APP_NAME" \
 	"$APP_NAME"
 fi
