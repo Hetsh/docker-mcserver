@@ -69,12 +69,16 @@ else
 		if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]
 		then
 			sed -i "s|FROM $IMAGE_NAME:.*|FROM $IMAGE_NAME:$IMAGE_VERSION|" Dockerfile
+			CHANGELOG+="Alpine $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
 		fi
 		
 		if [ "$CURRENT_APP_VERSION" != "$APP_VERSION" ]
 		then
 			sed -i "s|ARG BIN_URL=\".*\"|ARG BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+			CHANGELOG+="MC Server $CURRENT_APP_VERSION -> $APP_VERSION, "
 		fi
+
+		CHANGELOG="${CHANGELOG%,*}"
 
 		if [ "$1" == "--noconfirm" ]
 		then
@@ -86,7 +90,7 @@ else
 		if [[ $COMMIT =~ ^[Yy]$ ]]
 		then
 			git add Dockerfile
-			git commit -m "Version bump to $NEXT_VERSION"
+			git commit -m "$CHANGELOG"
 			git push
 			git tag "$NEXT_VERSION"
 			git push origin "$NEXT_VERSION"
