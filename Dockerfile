@@ -1,5 +1,6 @@
 FROM alpine:3.11.3
-RUN apk add --no-cache openjdk11-jre-headless
+RUN apk add --no-cache \
+    openjdk11-jre-headless=11.0.5_p10-r0
 
 ARG APP_USER="mc"
 RUN adduser -D -u 1357 "$APP_USER"
