@@ -5,7 +5,7 @@ ARG APP_USER="mc"
 RUN adduser -D -u 1357 "$APP_USER"
 
 ARG APP_BIN="/server.jar"
-ARG BIN_URL="https://launcher.mojang.com/v1/objects/4d1826eebac84847c71a77f9349cc22afd0cf0a1/server.jar"
+ARG BIN_URL="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
 ADD "$BIN_URL" "$APP_BIN"
 RUN chown "$APP_USER":"$APP_USER" "$APP_BIN"
 
