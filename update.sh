@@ -27,14 +27,15 @@ cd "$WORK_DIR"
 CURRENT_VERSION=$(git describe --tags --abbrev=0)
 NEXT_VERSION="$CURRENT_VERSION"
 
-# Base Image
-IMAGE_NAME="alpine"
+# Aline Linux
+IMAGE_PKG="alpine"
+IMAGE_NAME="Alpine"
 IMAGE_REGEX="(\d+\.)+\d+"
-IMAGE_VERSION=$(curl -L -s "https://registry.hub.docker.com/v2/repositories/library/$IMAGE_NAME/tags" | jq '."results"[]["name"]' | grep -m 1 -P -o "$IMAGE_REGEX" )
-CURRENT_IMAGE_VERSION=$(cat Dockerfile | grep -P -o "FROM $IMAGE_NAME:\K$IMAGE_REGEX")
+IMAGE_VERSION=$(curl -L -s "https://registry.hub.docker.com/v2/repositories/library/$IMAGE_PKG/tags" | jq '."results"[]["name"]' | grep -m 1 -P -o "$IMAGE_REGEX" )
+CURRENT_IMAGE_VERSION=$(cat Dockerfile | grep -P -o "FROM $IMAGE_PKG:\K$IMAGE_REGEX")
 if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]
 then
-	echo "Alpine $IMAGE_VERSION available!"
+	echo "$IMAGE_NAME $IMAGE_VERSION available!"
 
 	RELEASE="${CURRENT_VERSION#*-}"
 	NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
@@ -42,27 +43,29 @@ fi
 
 # OpenJDK-JRE
 JRE_PKG="openjdk11-jre-headless"
+JRE_NAME="OpenJRE"
 JRE_REGEX="(\d+\.)+\d+_p\d+-r\d+"
 JRE_VERSION=$(curl -L -s "https://pkgs.alpinelinux.org/package/v${IMAGE_VERSION%.*}/community/x86_64/$JRE_PKG" | grep -m 1 -P -o "$JRE_REGEX")
 CURRENT_JRE_VERSION=$(cat Dockerfile | grep -P -o "$JRE_PKG=\K$JRE_REGEX")
 if [ "$CURRENT_JRE_VERSION" != "$JRE_VERSION" ]
 then
-	echo "JRE $JRE_VERSION available!"
+	echo "$JRE_NAME $JRE_VERSION available!"
 
 	RELEASE="${CURRENT_VERSION#*-}"
 	NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
 fi
 
-# Application
-APP_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
-CURRENT_APP_VERSION=${CURRENT_VERSION%-*}
-if [ "$CURRENT_APP_VERSION" != "$APP_VERSION" ]
+# Minecraft Server
+MC_NAME="MC Server"
+MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
+CURRENT_MC_VERSION=${CURRENT_VERSION%-*}
+if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]
 then
-	echo "MC Server $APP_VERSION available!"
+	echo "$MC_NAME $MC_VERSION available!"
 
-	NEXT_VERSION="$APP_VERSION-1"
+	NEXT_VERSION="$MC_VERSION-1"
 
-	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$APP_VERSION\") | .url")
+	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
 	DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
 fi
 
@@ -81,20 +84,20 @@ else
 	then
 		if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]
 		then
-			sed -i "s|FROM $IMAGE_NAME:$IMAGE_REGEX|FROM $IMAGE_NAME:$IMAGE_VERSION|" Dockerfile
-			CHANGELOG+="Alpine $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
+			sed -i "s|FROM $IMAGE_PKG:$IMAGE_REGEX|FROM $IMAGE_PKG:$IMAGE_VERSION|" Dockerfile
+			CHANGELOG+="$IMAGE_NAME $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
 		fi
 		
 		if [ "$CURRENT_JRE_VERSION" != "$JRE_VERSION" ]
 		then
 			sed -i "s|$JRE_PKG=$JRE_REGEX|$JRE_PKG=$JRE_VERSION|" Dockerfile
-			CHANGELOG+="JRE $CURRENT_JRE_VERSION -> $JRE_VERSION, "
+			CHANGELOG+="$JRE_NAME $CURRENT_JRE_VERSION -> $JRE_VERSION, "
 		fi
 		
-		if [ "$CURRENT_APP_VERSION" != "$APP_VERSION" ]
+		if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]
 		then
-			sed -i "s|ARG BIN_URL=\".*\"|ARG BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
-			CHANGELOG+="MC Server $CURRENT_APP_VERSION -> $APP_VERSION, "
+			sed -i "s|BIN_URL=\".*\"|BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
+			CHANGELOG+="$MC_NAME $CURRENT_MC_VERSION -> $MC_VERSION, "
 		fi
 
 		CHANGELOG="${CHANGELOG%,*}"
