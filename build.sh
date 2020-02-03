@@ -1,37 +1,36 @@
 #!/usr/bin/env bash
 
+
 # Abort on any error
 set -eu
 
-# Traps for cleanup
-add_cleanup() {
-	CLEANUP_TRAPS="$1 && ${CLEANUP_TRAPS+}"
-	trap "echo -n 'Cleaning up... '; $CLEANUP_TRAPS echo 'done!' || echo 'failed!'" EXIT
-}
+# Relative file paths and import functions
+CWD=$(dirname "$0")
+cd "$CWD"
+source funcs.sh
 
-
-if ! docker version &> /dev/null
-then
+# Check acces do docker daemon
+assert_dependency "docker"
+if ! docker version &> /dev/null; then
     echo "Docker daemon is not running or you have unsufficient permissions!"
     exit -1
 fi
 
-WORK_DIR="${0%/*}"
-cd "$WORK_DIR"
-
+# Build the image
 APP_NAME="mcserver"
 docker build --tag "$APP_NAME" .
 
-read -p "Test image? [y/n]" -n 1 -r && echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
+if confirm_action "Test image?"; then
+	# Set up temporary directory
 	TMP_DIR=$(mktemp -d "/tmp/$APP_NAME-XXXXXXXXXX")
 	add_cleanup "rm -rf $TMP_DIR"
 	echo "eula=true" > "$TMP_DIR/eula.txt"
 
+	# Apply permissions, UID matches process user
 	APP_UID=1357
 	chown -R "$APP_UID":"$APP_UID" "$TMP_DIR"
 
+	# Start the test
 	docker run \
 	--rm \
 	--interactive \

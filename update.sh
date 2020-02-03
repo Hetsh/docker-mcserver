@@ -1,43 +1,21 @@
 #!/usr/bin/env bash
 
+
 # Abort on any error
 set -eu
 
-# Ensure depending programs exist
-if ! [ -x "$(command -v jq)" ]; then
-	echo "JSON parser \"jq\" is required but not installed!"
-	exit -2
-fi
-if ! [ -x "$(command -v curl)" ]; then
-	echo "\"cURL\" is required but not installed!"
-	exit -3
-fi
+# Simpler git usage, relative file paths and import functions
+CWD=$(dirname "$0")
+cd "$CWD"
+source funcs.sh
 
-# Switch to project dir to use git
-WORK_DIR="${0%/*}"
-cd "$WORK_DIR"
+# Check dependencies
+assert_dependency "jq"
+assert_dependency "curl"
 
 # Current version of docker image
 CURRENT_VERSION=$(git describe --tags --abbrev=0)
-RELEASE="${CURRENT_VERSION#*-}"
-
-# Check for available updates
-NEXT_VERSION="$CURRENT_VERSION"
-updates_available () {
-	if [ "$CURRENT_VERSION" == "$NEXT_VERSION" ]; then
-		return 1
-	else
-		return 0
-	fi
-}
-
-# Increase release counter
-update_release () {
-	# Prevent overriding major update changes
-	if ! updates_available; then
-		NEXT_VERSION="${CURRENT_VERSION%-*}-$((RELEASE+1))"
-	fi
-}
+register_current_version "$CURRENT_VERSION"
 
 # Alpine Linux
 IMAGE_PKG="alpine"
@@ -68,7 +46,7 @@ MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifes
 CURRENT_MC_VERSION=${CURRENT_VERSION%-*}
 if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]; then
 	echo "$MC_NAME $MC_VERSION available!"
-	NEXT_VERSION="$MC_VERSION-1"
+	update_version "$MC_VERSION"
 
 	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
 	DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
@@ -79,23 +57,8 @@ if ! updates_available; then
 	exit 0
 fi
 
-# Ask user if action should be performed
-SKIP_CONFIRM="${1+}"
-confirm_action () {
-	if [ "$SKIP_CONFIRM" = "--noconfirm" ]; then
-		return 0
-	fi
-
-	read -p "$1 [y/n]" -n 1 && echo
-	if [ "$REPLY" = "y" ]; then
-		return 0
-	fi
-	
-	return 1
-}
-
 # Perform modifications
-if confirm_action "Save changes?"; then
+if [ "${1+}" = "--noconfirm" ] || confirm_action "Save changes?"; then
 	if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]; then
 		sed -i "s|FROM $IMAGE_PKG:$IMAGE_REGEX|FROM $IMAGE_PKG:$IMAGE_VERSION|" Dockerfile
 		CHANGELOG+="$IMAGE_NAME $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
@@ -110,11 +73,7 @@ if confirm_action "Save changes?"; then
 	fi
 	CHANGELOG="${CHANGELOG%,*}"
 
-	if confirm_action "Commit changes?"; then
-		git add Dockerfile
-		git commit -m "$CHANGELOG"
-		git push
-		git tag "$NEXT_VERSION"
-		git push origin "$NEXT_VERSION"
+	if [ "${1+}" = "--noconfirm" ] || confirm_action "Commit changes?"; then
+		commit_changes "$CHANGELOG"
 	fi
 fi
