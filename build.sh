@@ -1,7 +1,14 @@
 #!/usr/bin/env bash
 
-set -e
-trap "exit" SIGINT
+# Abort on any error
+set -eu
+
+# Traps for cleanup
+add_cleanup() {
+	CLEANUP_TRAPS="$1 && ${CLEANUP_TRAPS+}"
+	trap "echo -n 'Cleaning up... '; $CLEANUP_TRAPS echo 'done!' || echo 'failed!'" EXIT
+}
+
 
 if ! docker version &> /dev/null
 then
@@ -19,7 +26,7 @@ read -p "Test image? [y/n]" -n 1 -r && echo
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 	TMP_DIR=$(mktemp -d "/tmp/$APP_NAME-XXXXXXXXXX")
-	trap "rm -rf $TMP_DIR" EXIT
+	add_cleanup "rm -rf $TMP_DIR"
 	echo "eula=true" > "$TMP_DIR/eula.txt"
 
 	APP_UID=1357
