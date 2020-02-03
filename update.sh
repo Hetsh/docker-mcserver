@@ -4,10 +4,13 @@
 # Abort on any error
 set -eu
 
-# Simpler git usage, relative file paths and import functions
+# Simpler git usage, relative file paths
 CWD=$(dirname "$0")
 cd "$CWD"
-source funcs.sh
+
+# Load helpful functions
+source libs/common.sh
+source libs/docker.sh
 
 # Check dependencies
 assert_dependency "jq"

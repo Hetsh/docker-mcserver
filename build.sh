@@ -4,10 +4,12 @@
 # Abort on any error
 set -eu
 
-# Relative file paths and import functions
+# Simpler git usage, relative file paths
 CWD=$(dirname "$0")
 cd "$CWD"
-source funcs.sh
+
+# Load helpful functions
+source libs/common.sh
 
 # Check acces do docker daemon
 assert_dependency "docker"
