@@ -63,11 +63,11 @@ fi
 # Perform modifications
 if [ "${1+}" = "--noconfirm" ] || confirm_action "Save changes?"; then
 	if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]; then
-		sed -i "s|FROM $IMAGE_PKG:$IMAGE_REGEX|FROM $IMAGE_PKG:$IMAGE_VERSION|" Dockerfile
+		sed -i "s|FROM $IMAGE_PKG:$CURRENT_IMAGE_VERSION|FROM $IMAGE_PKG:$IMAGE_VERSION|" Dockerfile
 		CHANGELOG+="$IMAGE_NAME $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
 	fi
 	if [ "$CURRENT_JRE_VERSION" != "$JRE_VERSION" ]; then
-		sed -i "s|$JRE_PKG=$JRE_REGEX|$JRE_PKG=$JRE_VERSION|" Dockerfile
+		sed -i "s|$JRE_PKG=$CURRENT_JRE_VERSION|$JRE_PKG=$JRE_VERSION|" Dockerfile
 		CHANGELOG+="$JRE_NAME $CURRENT_JRE_VERSION -> $JRE_VERSION, "
 	fi
 	if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]; then
