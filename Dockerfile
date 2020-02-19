@@ -3,7 +3,7 @@ RUN apk add --no-cache \
     openjdk11-jre-headless=11.0.5_p10-r0
 
 ARG APP_USER="mc"
-RUN adduser -D -u 1357 "$APP_USER"
+RUN adduser --disabled-password --uid 1357 "$APP_USER"
 
 ARG APP_BIN="/server.jar"
 ARG BIN_URL="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"

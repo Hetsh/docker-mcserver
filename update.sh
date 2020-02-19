@@ -17,43 +17,29 @@ assert_dependency "jq"
 assert_dependency "curl"
 
 # Current version of docker image
-CURRENT_VERSION=$(git describe --tags --abbrev=0)
-register_current_version "$CURRENT_VERSION"
+register_current_version
 
 # Alpine Linux
-IMAGE_PKG="alpine"
-IMAGE_NAME="Alpine"
-IMAGE_REGEX="(\d+\.)+\d+"
-IMAGE_TAGS=$(curl -L -s "https://registry.hub.docker.com/v2/repositories/library/$IMAGE_PKG/tags" | jq '."results"[]["name"]' | grep -P -o "$IMAGE_REGEX")
-IMAGE_VERSION=$(echo "$IMAGE_TAGS" | sort --version-sort | tail -n 1)
-CURRENT_IMAGE_VERSION=$(cat "Dockerfile" | grep -P -o "FROM $IMAGE_PKG:\K$IMAGE_REGEX")
-if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]; then
-	echo "$IMAGE_NAME $IMAGE_VERSION available!"
-	update_release
+update_image "alpine" "Alpine" "x86_64" "(\d+\.)+\d+"
+
+# Minecraft Server
+NEW_MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
+CURRENT_MC_VERSION="${_CURRENT_VERSION%-*}"
+if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
+	prepare_update "mcserver" "MC Server" "$CURRENT_MC_VERSION" "$NEW_MC_VERSION"
+	update_version "$NEW_MC_VERSION"
+
+	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
+	DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
+	
+	# Since the minecraft server is downloaded by a url, the version number needs to be replaced 
+	_UPDATES[-3]="BIN_URL"
+	_UPDATES[-2]="\".*\""
+	_UPDATES[-1]="\"$DOWNLOAD_URL\""
 fi
 
 # OpenJDK-JRE
-JRE_PKG="openjdk11-jre-headless"
-JRE_NAME="OpenJRE"
-JRE_REGEX="(\d+\.)+\d+_p\d+-r\d+"
-JRE_VERSION=$(curl -L -s "https://pkgs.alpinelinux.org/package/v${IMAGE_VERSION%.*}/community/x86_64/$JRE_PKG" | grep -m 1 -P -o "$JRE_REGEX")
-CURRENT_JRE_VERSION=$(cat "Dockerfile" | grep -P -o "$JRE_PKG=\K$JRE_REGEX")
-if [ "$CURRENT_JRE_VERSION" != "$JRE_VERSION" ]; then
-	echo "$JRE_NAME $JRE_VERSION available!"
-	update_release
-fi
-
-# Minecraft Server
-MC_NAME="MC Server"
-MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
-CURRENT_MC_VERSION=${CURRENT_VERSION%-*}
-if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]; then
-	echo "$MC_NAME $MC_VERSION available!"
-	update_version "$MC_VERSION"
-
-	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$MC_VERSION\") | .url")
-	DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
-fi
+update_alpine_pkg "openjdk11-jre-headless" "OpenJRE" "false" "community" "(\d+\.)+\d+_p\d+-r\d+"
 
 if ! updates_available; then
 	echo "No updates available."
@@ -62,21 +48,9 @@ fi
 
 # Perform modifications
 if [ "${1+}" = "--noconfirm" ] || confirm_action "Save changes?"; then
-	if [ "$CURRENT_IMAGE_VERSION" != "$IMAGE_VERSION" ]; then
-		sed -i "s|FROM $IMAGE_PKG:$CURRENT_IMAGE_VERSION|FROM $IMAGE_PKG:$IMAGE_VERSION|" Dockerfile
-		CHANGELOG+="$IMAGE_NAME $CURRENT_IMAGE_VERSION -> $IMAGE_VERSION, "
-	fi
-	if [ "$CURRENT_JRE_VERSION" != "$JRE_VERSION" ]; then
-		sed -i "s|$JRE_PKG=$CURRENT_JRE_VERSION|$JRE_PKG=$JRE_VERSION|" Dockerfile
-		CHANGELOG+="$JRE_NAME $CURRENT_JRE_VERSION -> $JRE_VERSION, "
-	fi
-	if [ "$CURRENT_MC_VERSION" != "$MC_VERSION" ]; then
-		sed -i "s|BIN_URL=\".*\"|BIN_URL=\"$DOWNLOAD_URL\"|" Dockerfile
-		CHANGELOG+="$MC_NAME $CURRENT_MC_VERSION -> $MC_VERSION, "
-	fi
-	CHANGELOG="${CHANGELOG%,*}"
+	save_changes
 
 	if [ "${1+}" = "--noconfirm" ] || confirm_action "Commit changes?"; then
-		commit_changes "$CHANGELOG"
+		commit_changes
 	fi
 fi
