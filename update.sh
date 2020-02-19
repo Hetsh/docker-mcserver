@@ -10,7 +10,7 @@ cd "$CWD"
 
 # Load helpful functions
 source libs/common.sh
-source libs/docker.sh
+source libs/alpine.sh
 
 # Check dependencies
 assert_dependency "jq"
@@ -20,7 +20,7 @@ assert_dependency "curl"
 register_current_version
 
 # Alpine Linux
-update_image "alpine" "Alpine" "x86_64" "(\d+\.)+\d+"
+update_image "x86_64" "(\d+\.)+\d+"
 
 # Minecraft Server
 NEW_MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
@@ -39,7 +39,7 @@ if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 fi
 
 # OpenJDK-JRE
-update_alpine_pkg "openjdk11-jre-headless" "OpenJRE" "false" "community" "(\d+\.)+\d+_p\d+-r\d+"
+update_pkg "openjdk11-jre-headless" "OpenJRE" "false" "community" "(\d+\.)+\d+_p\d+-r\d+"
 
 if ! updates_available; then
 	echo "No updates available."
