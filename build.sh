@@ -29,7 +29,7 @@ if confirm_action "Test image?"; then
 	echo "eula=true" > "$TMP_DIR/eula.txt"
 
 	# Apply permissions, UID matches process user
-	APP_UID=1357
+	APP_UID=$(cat Dockerfile | grep -P -o "ARG APP_UID=\K\d+")
 	chown -R "$APP_UID":"$APP_UID" "$TMP_DIR"
 
 	# Start the test
