@@ -17,7 +17,7 @@ assert_dependency "jq"
 assert_dependency "curl"
 
 # Base image
-update_image "alpine" "Alpine Linux" "(\d+\.)+\d+"
+update_image "library/alpine" "Alpine Linux" "(\d+\.)+\d+"
 
 # Minecraft Server
 NEW_MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
@@ -36,7 +36,7 @@ if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 	_UPDATES[-1]="\"$DOWNLOAD_URL\""
 fi
 
-# Packages
+# OpenJRE
 update_pkg "openjdk11-jre-headless" "OpenJRE" "false" "https://pkgs.alpinelinux.org/package/v${_NEW_IMG_VERSION%.*}/community/x86_64" "(\d+\.)+\d+_p\d+-r\d+"
 
 if ! updates_available; then

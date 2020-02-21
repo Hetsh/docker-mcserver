@@ -1,4 +1,4 @@
-FROM alpine:3.11.3
+FROM library/alpine:3.11.3
 RUN apk add --no-cache \
     openjdk11-jre-headless=11.0.5_p10-r0
 
