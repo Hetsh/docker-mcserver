@@ -1,24 +1,29 @@
-FROM library/alpine:3.11.3
+FROM library/alpine:20200122
 RUN apk add --no-cache \
-    openjdk11-jre-headless=11.0.5_p10-r0
+    openjdk11-jre-headless=11.0.6_p10-r0
 
-ARG BIN_URL="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
-ARG APP_BIN="/server.jar"
-ADD "$BIN_URL" "$APP_BIN"
-RUN chmod 644 "$APP_BIN"
-
+# App user
 ARG APP_USER="mc"
 ARG APP_UID=1357
 ARG APP_DIR="/mcserver"
 RUN adduser --disabled-password --uid "$APP_UID" --home "$APP_DIR" --gecos mcserver --shell /sbin/nologin "$APP_USER"
 
-USER "$APP_USER"
-WORKDIR "$APP_DIR"
-RUN echo "eula=true" > eula.txt
+# Server binary
+ARG BIN_URL="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
+ARG APP_BIN="/server.jar"
+ADD "$BIN_URL" "$APP_BIN"
+RUN chmod 644 "$APP_BIN"
+
+# EULA and Volumes
+ARG EULA="eula.txt"
+RUN echo "eula=true" > "$EULA" && \
+    chown "$APP_USER":"$APP_USER" "$EULA"
 VOLUME ["$APP_DIR"]
 
-EXPOSE 25565/tcp 25575/tcp 25565/udp
 #      GAME      RCON      QUERY
+EXPOSE 25565/tcp 25575/tcp 25565/udp
 
+USER "$APP_USER"
+WORKDIR "$APP_DIR"
 ENV JAVA_OPT="-Xms8M -Xmx1G"
 ENTRYPOINT exec java $JAVA_OPT -jar /server.jar nogui
