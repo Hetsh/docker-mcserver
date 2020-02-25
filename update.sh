@@ -20,8 +20,8 @@ assert_dependency "curl"
 update_image "library/alpine" "Alpine Linux" "\d{8}"
 
 # Minecraft Server
-NEW_MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
 CURRENT_MC_VERSION="${_CURRENT_VERSION%-*}"
+NEW_MC_VERSION=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
 if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 	prepare_update "mcserver" "MC Server" "$CURRENT_MC_VERSION" "$NEW_MC_VERSION"
 	update_version "$NEW_MC_VERSION"

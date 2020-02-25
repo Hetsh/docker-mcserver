@@ -5,12 +5,12 @@ RUN apk add --no-cache \
 # App user
 ARG APP_USER="mc"
 ARG APP_UID=1357
-ARG APP_DIR="/mcserver"
-RUN adduser --disabled-password --uid "$APP_UID" --home "$APP_DIR" --gecos mcserver --shell /sbin/nologin "$APP_USER"
+ARG DATA_DIR="/mcserver-data"
+RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
 
 # Server binary
 ARG BIN_URL="https://launcher.mojang.com/v1/objects/bb2b6b1aefcd70dfd1892149ac3a215f6c636b07/server.jar"
-ARG APP_BIN="/server.jar"
+ARG APP_BIN="/opt/server.jar"
 ADD "$BIN_URL" "$APP_BIN"
 RUN chmod 644 "$APP_BIN"
 
@@ -18,12 +18,12 @@ RUN chmod 644 "$APP_BIN"
 ARG EULA="eula.txt"
 RUN echo "eula=true" > "$EULA" && \
     chown "$APP_USER":"$APP_USER" "$EULA"
-VOLUME ["$APP_DIR"]
+VOLUME ["$DATA_DIR"]
 
 #      GAME      RCON      QUERY
 EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 USER "$APP_USER"
-WORKDIR "$APP_DIR"
+WORKDIR "$DATA_DIR"
 ENV JAVA_OPT="-Xms8M -Xmx1G"
-ENTRYPOINT exec java $JAVA_OPT -jar /server.jar nogui
+ENTRYPOINT exec java $JAVA_OPT -jar /opt/server.jar nogui
