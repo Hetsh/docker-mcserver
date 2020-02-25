@@ -29,17 +29,18 @@ if confirm_action "Test image?"; then
 	echo "eula=true" > "$TMP_DIR/eula.txt"
 
 	# Apply permissions, UID matches process user
-	APP_UID=$(cat Dockerfile | grep -P -o "ARG APP_UID=\K\d+")
+	extract_var APP_UID "./Dockerfile" "\K\d+"
 	chown -R "$APP_UID":"$APP_UID" "$TMP_DIR"
 
 	# Start the test
+	extract_var DATA_DIR "./Dockerfile" "\"\K[^\"]+"
 	docker run \
 	--rm \
 	--interactive \
 	--publish 25565:25565/tcp \
 	--publish 25565:25565/udp \
 	--publish 25575:25575/tcp \
-	--mount type=bind,source="$TMP_DIR",target="/$APP_NAME" \
+	--mount type=bind,source="$TMP_DIR",target="$DATA_DIR" \
 	--name "$APP_NAME" \
 	"$APP_NAME"
 fi
