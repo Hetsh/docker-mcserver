@@ -9,7 +9,8 @@ ExecStartPre=-/bin/docker create \
               --interactive \
               --name mcserver_%I \
               --publish %I:25565 \
-              --mount type=bind,source=/srv/mcserver_%I,target=/mcserver-data \
+              --mount type=bind,source=/etc/mcserver/%I,target=/mcserver-data \
+              --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
               hetsh/mcserver
 ExecStart=/bin/docker start --attach mcserver_%I
 ExecStop=/bin/sh -c "echo stop | docker attach mcserver_%I"

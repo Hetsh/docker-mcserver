@@ -5,7 +5,6 @@ RUN apk add --no-cache \
 # App user
 ARG APP_USER="mc"
 ARG APP_UID=1357
-ARG DATA_DIR="/mcserver-data"
 RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
 
 # Server binary
@@ -15,6 +14,7 @@ ADD "$BIN_URL" "$APP_BIN"
 RUN chmod 644 "$APP_BIN"
 
 # EULA and Volumes
+ARG DATA_DIR="/mcserver-data"
 ARG EULA="eula.txt"
 RUN echo "eula=true" > "$EULA" && \
     chown "$APP_USER":"$APP_USER" "$EULA"
