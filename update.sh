@@ -16,7 +16,7 @@ source libs/docker.sh
 assert_dependency "jq"
 assert_dependency "curl"
 
-# Base image
+# Alpine Linux
 update_image "library/alpine" "Alpine Linux" "false" "\d{8}"
 
 # Minecraft Server
@@ -28,7 +28,7 @@ if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 
 	METADATA_URL=$(curl -s -L "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
 	DOWNLOAD_URL=$(curl -s -L "$METADATA_URL" | jq -r ".downloads.server.url")
-	
+
 	# Since the minecraft server is not a regular package, the version number needs
 	# to be replaced with the url to download the binary
 	_UPDATES[-3]="BIN_URL"
