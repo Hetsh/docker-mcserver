@@ -1,6 +1,6 @@
 FROM library/alpine:20200428
 RUN apk add --no-cache \
-    openjdk11-jre-headless=11.0.6_p10-r1
+    openjdk11-jre-headless=11.0.7_p10-r1
 
 # App user
 ARG APP_USER="mc"
