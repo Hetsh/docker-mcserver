@@ -14,7 +14,7 @@ ADD "$BIN_URL" "$APP_BIN"
 RUN chmod 644 "$APP_BIN"
 
 # EULA and Volumes
-ARG DATA_DIR="/mcserver-data"
+ARG DATA_DIR="/mcserver"
 ARG EULA="eula.txt"
 RUN echo "eula=true" > "$EULA" && \
     chown "$APP_USER":"$APP_USER" "$EULA"
