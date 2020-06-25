@@ -36,6 +36,7 @@ if confirm_action "Test image?"; then
 	extract_var DATA_DIR "./Dockerfile" "\"\K[^\"]+"
 	docker run \
 	--rm \
+	--tty \
 	--interactive \
 	--publish 25565:25565/tcp \
 	--publish 25565:25565/udp \
