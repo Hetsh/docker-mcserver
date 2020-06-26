@@ -1,4 +1,4 @@
-FROM library/alpine:20200428
+FROM library/alpine:20200626
 RUN apk add --no-cache \
     openjdk11-jre-headless=11.0.7_p10-r1
 
