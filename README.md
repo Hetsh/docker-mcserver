@@ -31,7 +31,7 @@ docker run --mount type=bind,source=/path/to/storage,target=/mcserver ...
 ```bash
 systemctl enable mcserver@<port> --now
 ```
-The systemd unit can be found in my [GitHub](https://github.com/Hetsh/docker-mcserver) repository. Individual server instances are distinguished by host-port. By default, the systemd service assumes `/srv/mcserver_<port>` for persistent storage.
+The systemd unit can be found in my [GitHub](https://github.com/Hetsh/docker-mcserver) repository. Individual server instances are distinguished by host-port. By default, the systemd service assumes `/srv/mcserver/<port>` for persistent storage.
 
 ## Fork Me!
 This is an open project (visit [GitHub](https://github.com/Hetsh/docker-mcserver)). Please feel free to ask questions, file an issue or contribute to it.
