@@ -8,7 +8,7 @@ ExecStartPre=-/bin/docker create \
               --rm \
               --interactive \
               --name mcserver_%I \
-              --publish %I:25565 \
+              --publish %I:25565/tcp \
               --mount type=bind,source=/apps/mcserver/%I,target=/mcserver \
               --mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
               hetsh/mcserver
