@@ -20,20 +20,20 @@ assert_dependency "curl"
 update_image "library/alpine" "Alpine Linux" "false" "\d{8}"
 
 # Minecraft Server
+NAME="MC Server"
 CURRENT_MC_VERSION="${_CURRENT_VERSION%-*}"
 NEW_MC_VERSION=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
-if [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
-	prepare_update "mcserver" "MC Server" "$CURRENT_MC_VERSION" "$NEW_MC_VERSION"
-	update_version "$NEW_MC_VERSION"
-
+if [ -z "$CURRENT_MC_VERSION" ] || [ -z "$NEW_MC_VERSION" ]; then
+	echo -e "\e[31mFailed to get $NAME version!\e[0m"
+elif [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 	METADATA_URL=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
 	DOWNLOAD_URL=$(curl --silent --location "$METADATA_URL" | jq -r ".downloads.server.url")
-
-	# Since the minecraft server is not a regular package, the version number needs
-	# to be replaced with the url to download the binary
-	_UPDATES[-3]="BIN_URL"
-	_UPDATES[-2]="\".*\""
-	_UPDATES[-1]="\"$DOWNLOAD_URL\""
+	if [ -z "$DOWNLOAD_URL" ]; then
+		echo -e "\e[31mFailed to get $NAME download url!\e[0m"
+	else
+		prepare_update "BIN_URL" "$NAME" "$CURRENT_MC_VERSION" "$NEW_MC_VERSION" "\".*\"" "\"$DOWNLOAD_URL\""
+		update_version "$NEW_MC_VERSION"
+	fi
 fi
 
 # OpenJRE
