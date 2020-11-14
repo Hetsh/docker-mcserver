@@ -15,9 +15,9 @@ RUN chmod 644 "$APP_BIN"
 
 # EULA and Volumes
 ARG DATA_DIR="/mcserver"
-ARG EULA="eula.txt"
-RUN echo "eula=true" > "$EULA" && \
-    chown "$APP_USER":"$APP_USER" "$EULA"
+RUN mkdir "$DATA_DIR" && \
+    echo "eula=true" > "$DATA_DIR/eula.txt" && \
+    chown -R "$APP_USER":"$APP_USER" "$DATA_DIR"
 VOLUME ["$DATA_DIR"]
 
 #      GAME      RCON      QUERY
