@@ -10,7 +10,7 @@ ARG APP_UID=1357
 RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://launcher.mojang.com/v1/objects/0a269b5f2c5b93b1712d0f5dc43b6182b9ab254e/server.jar"
+ARG BIN_URL="https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar"
 ARG APP_BIN="/opt/server.jar"
 ADD "$BIN_URL" "$APP_BIN"
 RUN chmod 644 "$APP_BIN"
