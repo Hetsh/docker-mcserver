@@ -12,8 +12,7 @@ RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_
 # Server binary
 ARG BIN_URL="https://launcher.mojang.com/v1/objects/a16d67e5807f57fc4e550299cf20226194497dc2/server.jar"
 ARG APP_BIN="/opt/server.jar"
-ADD "$BIN_URL" "$APP_BIN"
-RUN chmod 644 "$APP_BIN"
+RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
 # EULA and Volumes
 ARG DATA_DIR="/mcserver"
@@ -27,5 +26,6 @@ EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 USER "$APP_USER"
 WORKDIR "$DATA_DIR"
-ENV JAVA_OPT="-Xms8M -Xmx1G"
-ENTRYPOINT exec java $JAVA_OPT -jar /opt/server.jar nogui
+ENV APP_BIN="$APP_BIN" \
+    JAVA_OPT="-Xms8M -Xmx1G"
+ENTRYPOINT exec java $JAVA_OPT -jar "$APP_BIN" nogui
