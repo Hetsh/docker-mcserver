@@ -2,7 +2,7 @@ FROM amd64/alpine:20210804
 RUN echo "http://dl-5.alpinelinux.org/alpine/edge/testing" >> /etc/apk/repositories && \
     apk update && \
     apk add --no-cache \
-        openjdk16-jre-headless=16.0.2_p7-r0
+        openjdk17-jre-headless=17.0.0_p35-r1
 
 # App user
 ARG APP_USER="mc"
