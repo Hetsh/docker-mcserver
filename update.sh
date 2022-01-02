@@ -37,7 +37,7 @@ elif [ "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION" ]; then
 fi
 
 # OpenJRE
-update_pkg "openjdk17-jre-headless" "Headless JRE" "false" "https://pkgs.alpinelinux.org/package/edge/testing/x86_64" "(\d+\.)+\d+_p\d+-r\d+"
+update_pkg "openjdk17-jre-headless" "Headless JRE" "false" "https://pkgs.alpinelinux.org/package/edge/community/x86_64" "(\d+\.)+\d+_p\d+-r\d+"
 
 if ! updates_available; then
 	#echo "No updates available."
