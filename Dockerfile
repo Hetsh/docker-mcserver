@@ -1,4 +1,4 @@
-FROM amd64/alpine:20220316
+FROM amd64/alpine:20220328
 RUN apk update && \
     apk add --no-cache \
         openjdk17-jre-headless=17.0.2_p8-r1
