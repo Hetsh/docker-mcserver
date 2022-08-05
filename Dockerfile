@@ -9,7 +9,7 @@ ARG APP_UID=1357
 RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://piston-data.mojang.com/v1/objects/8399e1211e95faa421c1507b322dbeae86d604df/server.jar"
+ARG BIN_URL="https://piston-data.mojang.com/v1/objects/f69c284232d7c7580bd89a5a4931c3581eae1378/server.jar"
 ARG APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
