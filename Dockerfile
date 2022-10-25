@@ -1,7 +1,7 @@
 FROM amd64/alpine:20220715
 RUN apk update && \
     apk add --no-cache \
-        openjdk17-jre-headless=17.0.5_p8-r1
+        openjdk17-jre-headless=17.0.5_p8-r2
 
 # App user
 ARG APP_USER="mc"
