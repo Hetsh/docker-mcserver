@@ -1,7 +1,7 @@
-FROM amd64/alpine:20221110
+FROM amd64/alpine:20240329
 RUN apk update && \
     apk add --no-cache \
-        openjdk17-jre-headless=17.0.5_p8-r2
+        openjdk21-jre-headless=21.0.3_p9-r0
 
 # App user
 ARG APP_USER="mc"
@@ -9,7 +9,7 @@ ARG APP_UID=1357
 RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://piston-data.mojang.com/v1/objects/c9df48efed58511cdd0213c56b9013a7b5c9ac1f/server.jar"
+ARG BIN_URL="https://piston-data.mojang.com/v1/objects/145ff0858209bcfc164859ba735d4199aafa1eea/server.jar"
 ARG APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
