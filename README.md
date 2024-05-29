@@ -3,29 +3,30 @@ Super small and simple vanilla minecraft server.
 
 ## Running the server
 ```bash
-docker run --detach --interactive --name mcserver --publish 25565:25565 hetsh/mcserver
+docker run --rm --detach --interactive --name mcserver --publish 25565:25565 hetsh/mcserver
 ```
-`--interactive` enables passing commands to the running server (required for shutdown).
 
-## Stopping the container
+## Stopping the server
 ```bash
 echo stop | docker attach mcserver
 ```
-Because the minecraft server does not catch the `SIGTERM` signal that is sent by `docker stop`, we have to gracefully shut down the server by piping the `stop` command to container.
+Because the minecraft server does not handle the `SIGTERM` signal that is sent by `docker stop`, it is necessary to use the `stop` command to gracefully shut down the container, which in turn is only possible when the container was started with the `--interactive` flag.
 
 ## Creating persistent storage
 ```bash
 MP="/path/to/storage"
 mkdir -p "$MP"
+# Accept the Minecraft EULA
+# https://www.minecraft.net/eula
 echo "eula=true" > "$MP/eula.txt"
 chown -R 1357:1357 "$MP"
 ```
 `1357` is the numerical id of the user running the server (see Dockerfile).
-Mojang also requires you to accept their EULA. Honestly, you would just klick 'accept' anyway...
-Start the server with the additional mount flag:
+Start the container with this additional parameter:
 ```bash
 docker run --mount type=bind,source=/path/to/storage,target=/mcserver ...
 ```
+`/mcserver` is the working directory inside the container (see Dockerfile).
 
 ## Automate startup and shutdown via systemd
 The systemd unit can be found in my GitHub [repository](https://github.com/Hetsh/docker-mcserver).
