@@ -6,11 +6,17 @@ RUN apk update && \
 # App user
 ARG APP_USER="mc"
 ARG APP_UID=1357
-RUN adduser --disabled-password --uid "$APP_UID" --no-create-home --gecos "$APP_USER" --shell /sbin/nologin "$APP_USER"
+RUN adduser \
+        --disabled-password \
+        --uid "$APP_UID" \
+        --no-create-home \
+        --gecos "$APP_USER" \
+        --shell /sbin/nologin \
+        "$APP_USER"
 
 # Server binary
 ARG BIN_URL="https://piston-data.mojang.com/v1/objects/145ff0858209bcfc164859ba735d4199aafa1eea/server.jar"
-ARG APP_BIN="/opt/server.jar"
+ENV APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
 # Working directory and EULA
@@ -24,6 +30,5 @@ WORKDIR "$DATA_DIR"
 EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 USER "$APP_USER"
-ENV APP_BIN="$APP_BIN" \
-    JAVA_OPT="-Xms8M -Xmx1G"
+ENV JAVA_OPT="-Xms8M -Xmx1G"
 ENTRYPOINT exec java $JAVA_OPT -jar "$APP_BIN" nogui
