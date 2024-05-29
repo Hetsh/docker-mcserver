@@ -4,7 +4,7 @@ RUN apk update && \
         openjdk21-jre-headless=21.0.3_p9-r0
 
 # App user
-ARG APP_USER="mc"
+ARG APP_USER="mcserver"
 ARG APP_UID=1357
 RUN adduser \
         --disabled-password \
