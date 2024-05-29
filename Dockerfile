@@ -13,18 +13,17 @@ ARG BIN_URL="https://piston-data.mojang.com/v1/objects/145ff0858209bcfc164859ba7
 ARG APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
-# EULA and Volumes
+# Working directory and EULA
 ARG DATA_DIR="/mcserver"
 RUN mkdir "$DATA_DIR" && \
     echo "eula=true" > "$DATA_DIR/eula.txt" && \
     chown -R "$APP_USER":"$APP_USER" "$DATA_DIR"
-VOLUME ["$DATA_DIR"]
+WORKDIR "$DATA_DIR"
 
 #      GAME      RCON      QUERY
 EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 USER "$APP_USER"
-WORKDIR "$DATA_DIR"
 ENV APP_BIN="$APP_BIN" \
     JAVA_OPT="-Xms8M -Xmx1G"
 ENTRYPOINT exec java $JAVA_OPT -jar "$APP_BIN" nogui
