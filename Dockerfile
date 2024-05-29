@@ -30,5 +30,5 @@ WORKDIR "$DATA_DIR"
 EXPOSE 25565/tcp 25575/tcp 25565/udp
 
 USER "$APP_USER"
-ENV JAVA_OPT="-Xms8M -Xmx1G"
-ENTRYPOINT exec java $JAVA_OPT -jar "$APP_BIN" nogui
+ENV JAVA_OPT="-Xmx1G"
+ENTRYPOINT exec java $JAVA_OPT -jar "$APP_BIN" --nogui
