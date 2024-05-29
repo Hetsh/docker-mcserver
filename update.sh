@@ -25,7 +25,9 @@ CURRENT_MC_VERSION="${_CURRENT_VERSION%-*}"
 NEW_MC_VERSION=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
 if test -z "$CURRENT_MC_VERSION" || test -z "$NEW_MC_VERSION"; then
 	echo -e "\e[31mFailed to get $NAME version!\e[0m"
-elif test "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION"; then
+	exit 1
+fi
+if test "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION"; then
 	METADATA_URL=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
 	DOWNLOAD_URL=$(curl --silent --location "$METADATA_URL" | jq -r ".downloads.server.url")
 	if test -z "$DOWNLOAD_URL"; then
