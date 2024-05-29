@@ -13,6 +13,7 @@ jobs:
           submodules: true
           fetch-tags: true
           fetch-depth: 0
-      - run: git config --global user.email "${{ secrets.GIT_EMAIL }}"
-      - run: git config --global user.name "${{ github.actor }}"
-      - run: ./update.sh --noconfirm
+      - run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          ./update.sh --noconfirm
