@@ -33,7 +33,7 @@ case "${1-}" in
 			--publish 25565:25565/tcp \
 			--publish 25565:25565/udp \
 			--publish 25575:25575/tcp \
-			--mount type=bind,source=/etc/localtime,target=/etc/localtime,readonly \
+			--volume /etc/localtime:/etc/localtime:ro \
 			"$IMG_NAME:test"
 	;;
 	# Build if it does not exist and push image to docker hub

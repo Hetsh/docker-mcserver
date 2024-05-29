@@ -23,8 +23,8 @@ chown -R 1357:1357 "$MP"
 ```
 `1357` is the numerical id of the user running the server (see Dockerfile).
 Start the container with this additional parameter:
-```bash
-docker run --mount type=bind,source=/path/to/storage,target=/mcserver ...
+```
+--volume /path/to/storage:/mcserver
 ```
 `/mcserver` is the working directory inside the container (see Dockerfile).
 
