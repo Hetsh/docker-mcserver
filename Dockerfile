@@ -1,4 +1,4 @@
-FROM amd64/alpine:20240923
+FROM amd64/alpine:20250108
 RUN apk update && \
     apk add --no-cache \
         openjdk21-jre-headless=21.0.5_p11-r0
