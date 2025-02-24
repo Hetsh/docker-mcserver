@@ -1,7 +1,7 @@
 FROM amd64/alpine:20250108
 RUN apk update && \
     apk add --no-cache \
-        openjdk21-jre-headless=21.0.6_p7-r0
+        openjdk21-jre-headless=21.0.6_p7-r1
 
 # App user
 ARG APP_USER="mcserver"
