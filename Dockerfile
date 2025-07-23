@@ -1,7 +1,7 @@
 FROM amd64/alpine:20250108
 RUN apk update && \
     apk add --no-cache \
-        openjdk21-jre-headless=21.0.7_p6-r0
+        openjdk21-jre-headless=21.0.8_p9-r0
 
 # App user
 ARG APP_USER="mcserver"
@@ -15,7 +15,7 @@ RUN adduser \
         "$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://piston-data.mojang.com/v1/objects/05e4b48fbc01f0385adb74bcff9751d34552486c/server.jar"
+ARG BIN_URL="https://piston-data.mojang.com/v1/objects/6bce4ef400e4efaa63a13d5e6f6b500be969ef81/server.jar"
 ENV APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
