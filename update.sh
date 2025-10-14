@@ -2,7 +2,7 @@
 
 
 # Abort on any error
-set -e -u
+set -e -u -o pipefail
 
 # Simpler git usage, relative file paths
 CWD=$(dirname "$0")
@@ -16,41 +16,25 @@ source libs/docker.sh
 assert_dependency "jq"
 assert_dependency "curl"
 
-# Alpine Linux
-update_image "amd64/alpine" "Alpine Linux" "false" "\d{8}"
-
-# Minecraft Server
-NAME="MC Server"
-CURRENT_MC_VERSION="${_CURRENT_VERSION%-*}"
-NEW_MC_VERSION=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
-if test -z "$CURRENT_MC_VERSION" || test -z "$NEW_MC_VERSION"; then
-	echo -e "\e[31mFailed to get $NAME version!\e[0m"
-	exit 1
-fi
-if test "$CURRENT_MC_VERSION" != "$NEW_MC_VERSION"; then
-	METADATA_URL=$(curl --silent --location "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
-	DOWNLOAD_URL=$(curl --silent --location "$METADATA_URL" | jq -r ".downloads.server.url")
-	if test -z "$DOWNLOAD_URL"; then
-		echo -e "\e[31mFailed to get $NAME download url!\e[0m"
-	else
-		prepare_update "BIN_URL" "$NAME" "$CURRENT_MC_VERSION" "$NEW_MC_VERSION" "\".*\"" "\"$DOWNLOAD_URL\""
-		update_version "$NEW_MC_VERSION"
-	fi
-fi
-
-# OpenJRE
-update_pkg "openjdk21-jre-headless" "Headless JRE" "false" "https://pkgs.alpinelinux.org/package/edge/community/x86_64" "(\d+\.)+\d+_p\d+-r\d+"
-
+# Updates
+update_image "amd64/alpine" "\d{8}" "Alpine Linux"
+update_packages_apk "hetsh/mcserver"
+URL_ID="BIN_URL"
+CURRENT_DOWNLOAD_URL=$(grep --only-matching --perl-regexp "(?<=$URL_ID=\")[^\"]+" "Dockerfile")
+NEW_MC_VERSION=$(curl_request "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".latest.release")
+METADATA_URL=$(curl_request "https://launchermeta.mojang.com/mc/game/version_manifest.json" | jq -r ".versions[] | select(.id==\"$NEW_MC_VERSION\") | .url")
+NEW_DOWNLOAD_URL=$(curl_request "$METADATA_URL" | jq -r ".downloads.server.url")
+process_update "$URL_ID" "\"$CURRENT_DOWNLOAD_URL\"" "\"$NEW_DOWNLOAD_URL\"" "MC Server" "${_GIT_VERSION%-*}" "$NEW_MC_VERSION"
 if ! updates_available; then
-	#echo "No updates available."
+	echo "No updates available."
 	exit 0
 fi
 
 # Perform modifications
-if test "${1-}" = "--noconfirm" || confirm_action "Save changes?"; then
+if test "${1-}" == "--noconfirm" || confirm_action "Save changes?"; then
 	save_changes
 
-	if test "${1-}" = "--noconfirm" || confirm_action "Commit changes?"; then
-		commit_changes
+	if test "${1-}" == "--noconfirm" || confirm_action "Commit changes?"; then
+		commit_changes "BIN_URL"
 	fi
 fi

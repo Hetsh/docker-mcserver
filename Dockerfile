@@ -1,5 +1,6 @@
 FROM amd64/alpine:20250108
-RUN apk update && \
+ARG LAST_UPGRADE="2025-10-14T21:27:48+02:00"
+RUN apk upgrade && \
     apk add --no-cache \
         openjdk21-jre-headless=21.0.8_p9-r0
 
