@@ -1,5 +1,5 @@
 FROM amd64/alpine:20250108
-ARG LAST_UPGRADE="2025-11-22T11:51:26+01:00"
+ARG LAST_UPGRADE="2025-12-14T10:28:23+01:00"
 RUN apk upgrade && \
     apk add --no-cache \
         openjdk21-jre-headless=21.0.9_p10-r0
@@ -16,7 +16,7 @@ RUN adduser \
         "$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://piston-data.mojang.com/v1/objects/95495a7f485eedd84ce928cef5e223b757d2f764/server.jar"
+ARG BIN_URL="https://piston-data.mojang.com/v1/objects/64bb6d763bed0a9f1d632ec347938594144943ed/server.jar"
 ENV APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
