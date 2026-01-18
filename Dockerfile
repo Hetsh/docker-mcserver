@@ -1,5 +1,5 @@
 FROM amd64/alpine:20251224
-ARG LAST_UPGRADE="2026-01-09T20:47:10+01:00"
+ARG LAST_UPGRADE="2026-01-18T12:45:51+01:00"
 RUN apk upgrade && \
     apk add --no-cache \
         openjdk21-jre-headless=21.0.9_p10-r0
