@@ -1,8 +1,0 @@
-[Unit]
-Description=Boot delay for Minecraft server
-
-[Timer]
-OnBootSec=1min
-
-[Install]
-WantedBy=timers.target
