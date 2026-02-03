@@ -1,6 +1,6 @@
-FROM amd64/alpine:20260127
+FROM hetsh/alpine:20260127-1
 ARG LAST_UPGRADE="2026-01-29T13:20:47+01:00"
-RUN apk upgrade && \
+RUN apk upgrade --no-cache && \
 	apk add --no-cache \
 		openjdk21-jre-headless=21.0.10_p7-r0
 

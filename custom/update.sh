@@ -7,7 +7,7 @@
 GIT_VERSION="$(git describe --tags --first-parent --abbrev=0)"
 MAIN_ITEM="BIN_URL"
 function check_for_updates {
-	update_base_image "\\d{8}"
+	update_base_image "\\d{8}-\\d+"
 	update_packages "hetsh/mcserver"
 
 	URL_ID="BIN_URL"
