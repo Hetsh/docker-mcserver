@@ -1,5 +1,5 @@
-FROM hetsh/alpine:20260127-5
-ARG LAST_UPGRADE="2026-03-30T05:23:35+02:00"
+FROM hetsh/alpine:20260127-6
+ARG LAST_UPGRADE="2026-04-13T15:28:47+02:00"
 RUN apk upgrade --no-cache && \
 	apk add --no-cache \
 		openjdk21-jre-headless=21.0.10_p7-r0
@@ -16,7 +16,7 @@ RUN adduser \
 		"$APP_USER"
 
 # Server binary
-ARG BIN_URL="https://piston-data.mojang.com/v1/objects/49c8195703ad0ba4f0a4efbccfd85a4a8ca57431/server.jar"
+ARG BIN_URL="https://piston-data.mojang.com/v1/objects/97ccd4c0ed3f81bbb7bfacddd1090b0c56f9bc51/server.jar"
 ENV APP_BIN="/opt/server.jar"
 RUN wget --quiet --output-document "$APP_BIN" "$BIN_URL"
 
