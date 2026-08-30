@@ -1,5 +1,5 @@
-FROM hetsh/alpine:20260805-1
-ARG LAST_UPGRADE="2026-08-09T09:19:11+02:00"
+FROM hetsh/alpine:20260805-2
+ARG LAST_UPGRADE="2026-08-30T11:09:37+02:00"
 RUN apk upgrade --no-cache && \
 	apk add --no-cache \
 		openjdk21-jre-headless=21.0.12_p8-r0
