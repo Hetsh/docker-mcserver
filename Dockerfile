@@ -1,8 +1,8 @@
-FROM hetsh/alpine:20260805-12
-ARG LAST_UPGRADE="2026-11-15T06:28:15+01:00"
+FROM hetsh/alpine:20260805-13
+ARG LAST_UPGRADE="2026-11-22T08:32:33+01:00"
 RUN apk upgrade --no-cache && \
 	apk add --no-cache \
-		openjdk21-jre-headless=21.0.13.0.3_p1-r0
+		openjdk21-jre-headless=21.0.13.1_p2-r0
 
 # App user
 ARG APP_USER="mcserver"
